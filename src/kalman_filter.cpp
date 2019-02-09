@@ -69,14 +69,17 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
    *
    */
 
-	Tools tools2;
-	MatrixXd H_ = tools2.CalculateJacobian(x_);
+	//Tools tools2;
+	//MatrixXd H_ = tools2.CalculateJacobian(x_);
 
 	VectorXd hx(3);
 	float px = x_[0];
 	float py = x_[1];
 	float vx = x_[2];
 	float vy = x_[3];
+
+	if(px == 0. && py == 0.)
+		return;
 
 	float rho = sqrt (px*px + py*py);
 	float phi = atan2(py, px);
@@ -90,11 +93,11 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 	cout << "hx ="<< hx << "\n";
 
 	VectorXd y = z-hx;
-	while(y(1) > M_PI){
-		y(1) -= M_PI;
+	while(y[1] > M_PI){
+		y[1] -= M_PI;
 	}
-	while(y(1) < -M_PI){
-		y(1) += M_PI;
+	while(y[1] < -M_PI){
+		y[1] += M_PI;
 	}
 	MatrixXd H_t = H_.transpose();
 	MatrixXd S = H_ * P_ * H_t + R_;
